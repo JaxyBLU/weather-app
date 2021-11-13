@@ -7,11 +7,11 @@ const search = document.getElementById('search');
 const main = document.getElementById('main');
 
 /*========================== Function for getting the weather information from API ===========*/
-async function getWeatherByLocation(location){
-	const resp = await fetch(url(location), {origin: 'cors'});
+async function getWeatherByLocation(place){
+	const resp = await fetch(url(place), {origin: 'cors'});
 
 	const respData = await resp.json();
-
+	
 	addWeatherToPage(respData);
 }
 
@@ -23,11 +23,14 @@ function addWeatherToPage(data){
 	weatherDiv.classList.add('weatherElement');
 
 	weatherDiv.innerHTML = `
-			<small>There is</small>
-			<h2>${temp}</h2>
-			<p>in ${location}</p>
+			<h2><img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" /> ${temp}° C 
+				<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" /></h2>
+			<small>${data.weather[0].main}</small>
+			<p>in ${data.name}</p>
 		`;
-	document.body.appendChild(weatherDiv);
+
+	main.innerText = '';
+	main.appendChild(weatherDiv);
 }
 
 /*============================== Function for converting Kelvin to Celcius ===================*/
@@ -35,5 +38,15 @@ function KelvinToCelcius(K){
 	return (K - 273.15).toFixed(2);
 }
 
+/*============================ Event Listener for searching by Location ======================*/
+form.addEventListener('submit', (e)=>{
+	e.preventDefault();
 
-getWeatherByLocation('Dubai');
+	const place = search.value;
+	search.value = '';
+	search.blur();
+
+	if(place){
+		getWeatherByLocation(place);
+	}
+})
